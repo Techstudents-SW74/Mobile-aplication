@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         //'/cashier': (context) => CashierScreen(),
         //'/chairs': (context) => AccountSavedScreen(),
-        //'/sales_summary': (context) => SalesSummaryScreen(),
+        '/sales_summary': (context) => SalesSummaryScreen(),
         //'/account_screen': (context) => AccountScreen(),
         '/payment': (context) => PaymentScreen(),
         //'/document': (context) => DocumentScreen(),
