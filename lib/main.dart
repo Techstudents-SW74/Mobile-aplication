@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         //'/chairs': (context) => AccountSavedScreen(),
         //'/sales_summary': (context) => SalesSummaryScreen(),
         //'/account_screen': (context) => AccountScreen(),
-        //'/payment': (context) => PaymentScreen(),
+        '/payment': (context) => PaymentScreen(),
         //'/document': (context) => DocumentScreen(),
       },
     );
