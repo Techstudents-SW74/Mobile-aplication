@@ -100,4 +100,47 @@ class _AccountSavedScreenState extends State<AccountSavedScreen> {
       ),
     );
   }
+
+  Widget _buildCuentasView() {
+    return ListView.builder(
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Card(
+            color: Color(0xFFEDEBF5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ListTile(
+              title: Text(
+                'Nombre de la Cuenta',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('Cliente'),
+              trailing: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('S/100', style: TextStyle(fontWeight: FontWeight.bold)),
+                    IconButton(
+                      icon: Icon(Icons.print, color: Colors.black),
+                      onPressed: () {
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.black),
+                      onPressed: () {
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
