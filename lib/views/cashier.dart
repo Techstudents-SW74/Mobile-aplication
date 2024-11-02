@@ -52,7 +52,7 @@ class _BoxScreenState extends State<CashierScreen> {
               ),
               child: ListTile(
                 title: Text(
-                  'Producto',
+                  'Product',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text('Acceso rápido'),
