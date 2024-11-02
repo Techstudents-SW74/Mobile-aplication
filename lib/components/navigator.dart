@@ -12,16 +12,16 @@ class NavigatorBar extends StatelessWidget {
       onTap: onItemSelected,
       items: [
         BottomNavigationBarItem(
-            icon: Icon(Icons.calculate),
-            label: ''
+          icon: Icon(Icons.calculate),
+          label: ''
         ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: ''
+          icon: Icon(Icons.restaurant_menu),
+          label: ''
         ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
-            label: ''
+          icon: Icon(Icons.trending_up),
+          label: ''
         ),
       ],
       backgroundColor: Color(0xFF31304A),

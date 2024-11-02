@@ -40,8 +40,7 @@ class _AccountScreenState extends State<AccountScreen> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Guardar Venta',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+              Text('Guardar Venta', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
               IconButton(
                 icon: Icon(Icons.close),
                 onPressed: () {
@@ -151,11 +150,8 @@ class _AccountScreenState extends State<AccountScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                showClientForm
-                                    ? 'Cancelar Cliente'
-                                    : 'Agregar Cliente',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                showClientForm ? 'Cancelar Cliente' : 'Agregar Cliente',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Icon(
                                 showClientForm ? Icons.close : Icons.person_add,
@@ -207,8 +203,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                 style: TextStyle(color: Colors.white),
                               ),
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 50, vertical: 15),
+                                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                                 backgroundColor: Color(0xFF7C73CC),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30.0),
@@ -259,21 +254,16 @@ class _AccountScreenState extends State<AccountScreen> {
                               children: [
                                 Expanded(
                                   child: ElevatedButton(
-                                    onPressed: clientSaved
-                                        ? _showSaveSaleDialog
-                                        : null,
+                                    onPressed: clientSaved ? _showSaveSaleDialog : null,
                                     child: Text(
                                       'Guardar Venta',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 16),
+                                      style: TextStyle(color: Colors.white, fontSize: 16),
                                     ),
                                     style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 80, vertical: 15),
+                                      padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                                       backgroundColor: Color(0xFF31304A),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
+                                        borderRadius: BorderRadius.circular(10.0),
                                       ),
                                     ),
                                   ),
@@ -286,15 +276,11 @@ class _AccountScreenState extends State<AccountScreen> {
                               children: [
                                 Text(
                                   'Subtotal:',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                                 Text(
                                   'S/0.00',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                               ],
                             ),
@@ -303,15 +289,11 @@ class _AccountScreenState extends State<AccountScreen> {
                               children: [
                                 Text(
                                   'I.G.V.:',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                                 Text(
                                   'S/0.00',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                               ],
                             ),
@@ -321,21 +303,17 @@ class _AccountScreenState extends State<AccountScreen> {
                                 Expanded(
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      Navigator.pushReplacementNamed(
-                                          context, '/payment');
+                                      Navigator.pushReplacementNamed(context, '/payment');
                                     },
                                     child: Text(
                                       'Cobrar S/0.00',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 17),
+                                      style: TextStyle(color: Colors.white, fontSize: 17),
                                     ),
                                     style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 60, vertical: 15),
+                                      padding: EdgeInsets.symmetric(horizontal: 60, vertical: 15),
                                       backgroundColor: Color(0xFF31304A),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
+                                        borderRadius: BorderRadius.circular(10.0),
                                       ),
                                     ),
                                   ),

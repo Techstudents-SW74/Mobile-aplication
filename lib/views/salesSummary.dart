@@ -34,27 +34,23 @@ class _SalesSummaryScreenState extends State<SalesSummaryScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                    child: _buildSummaryCard(
-                        'Total de ventas en soles', 'S/ 746.00')),
-              ],
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                    child: _buildSummaryCard(
-                        'Total de ventas en dólares', '\$ 0.00')),
-              ],
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(child: _buildSummaryCard('Cantidad de ventas', '43')),
-              ],
-            ),
+              Row(
+                children: [
+                  Expanded(child: _buildSummaryCard('Total de ventas en soles', 'S/ 746.00')),
+                ],
+              ),
+              SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(child: _buildSummaryCard('Total de ventas en dólares', '\$ 0.00')),
+                ],
+              ),
+              SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(child: _buildSummaryCard('Cantidad de ventas', '43')),
+                ],
+              ),
           ],
         ),
       ),
@@ -79,11 +75,9 @@ class _SalesSummaryScreenState extends State<SalesSummaryScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(title,
-                  style: TextStyle(fontSize: 16, color: Colors.black54)),
+              Text(title, style: TextStyle(fontSize: 16, color: Colors.black54)),
               SizedBox(height: 8),
-              Text(value,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
