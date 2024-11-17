@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_application/views/cashier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/iam_service.dart';
+import '../services/api_service.dart';
 import 'userProfile.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,38 +14,40 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
+  final ApiService _apiService = ApiService();
   String _responseMessage = '';
 
   Future<void> _login(BuildContext context) async {
     try {
-      final user = await _authService.signIn(
+      final user = await _apiService.login(
         _usernameController.text,
         _passwordController.text,
       );
 
-      if (user != null) {
-        // Save the restaurantId to SharedPreferences (if needed)
+      final token = await _apiService.getToken();
+      if (token != null && user != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('userId', user.restaurantId);
+        await prefs.setString('authToken', token);
+        await prefs.setInt('restaurantId', user['restaurantId']);
 
         setState(() {
-          _responseMessage = 'Login successful! Welcome, ${user.name}';
+          _responseMessage = 'Inicio de sesión exitoso. Bienvenido!';
         });
 
-        // Navigate to the UserProfileScreen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => UserProfileScreen(user: user)),
+          MaterialPageRoute(
+            builder: (context) => CashierScreen(),
+          ),
         );
       } else {
         setState(() {
-          _responseMessage = 'Login failed. Please check your credentials.';
+          _responseMessage = 'Error: No se recibió token o datos del usuario.';
         });
       }
     } catch (e) {
       setState(() {
-        _responseMessage = 'An error occurred. Please try again later.';
+        _responseMessage = 'Error al iniciar sesión. Verifique sus credenciales.';
       });
     }
   }
