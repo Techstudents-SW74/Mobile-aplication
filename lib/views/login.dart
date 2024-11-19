@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile_application/views/cashier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
-import 'userProfile.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,11 +23,10 @@ class _LoginScreenState extends State<LoginScreen> {
         _passwordController.text,
       );
 
-      final token = await _apiService.getToken();
-      if (token != null && user != null) {
+      if (user != null) {
+        final token = user['token'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('authToken', token);
-        await prefs.setInt('restaurantId', user['restaurantId']);
 
         setState(() {
           _responseMessage = 'Inicio de sesión exitoso. Bienvenido!';
@@ -36,13 +34,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => CashierScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => CashierScreen()),
         );
       } else {
         setState(() {
-          _responseMessage = 'Error: No se recibió token o datos del usuario.';
+          _responseMessage = 'Error: Credenciales inválidas.';
         });
       }
     } catch (e) {

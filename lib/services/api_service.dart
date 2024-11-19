@@ -53,7 +53,17 @@ class ApiService {
 
   Future<List<dynamic>> getProductsByRestaurant(String restaurantId) async {
     final url = Uri.parse('$BASE_URL/product/restaurant/$restaurantId');
-    final headers = await _getHeaders();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
+
+    if (token == null) {
+      throw Exception('Token no encontrado.');
+    }
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
 
     final response = await http.get(url, headers: headers);
 

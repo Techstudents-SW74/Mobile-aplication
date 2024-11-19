@@ -25,9 +25,10 @@ class _BoxScreenState extends State<CashierScreen> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       final restaurantId = prefs.getInt('restaurantId');
-      print(prefs.getInt('restaurantId'));
+      print('Restaurant ID: $restaurantId');
       if (restaurantId != null) {
         final products = await _apiService.getProductsByRestaurant(restaurantId.toString());
+        print('Productos obtenidos: $products');
         setState(() {
           _products = products;
           _isLoading = false;
