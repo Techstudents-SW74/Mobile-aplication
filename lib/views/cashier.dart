@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_application/views/account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mobile_application/components/navigator.dart';
 import '../services/api_service.dart';
@@ -108,7 +109,14 @@ class _BoxScreenState extends State<CashierScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/account_screen');
+                  Navigator.pushReplacementNamed(
+                    context,
+                    '/account_screen',
+                    arguments: {
+                      'productName': product['productName'],
+                      'productPrice': product['productPrice'],
+                    },
+                  );
                 },
               ),
             ),

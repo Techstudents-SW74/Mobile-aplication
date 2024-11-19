@@ -23,9 +23,27 @@ class MyApp extends StatelessWidget {
         '/cashier': (context) => CashierScreen(),
         '/sales_summary': (context) => SalesSummaryScreen(),
         '/chairs': (context) => AccountSavedScreen(),
-        '/account_screen': (context) => AccountScreen(),
-        '/payment': (context) => PaymentScreen(),
-        '/document': (context) => DocumentScreen(),
+        '/account_screen': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+          return AccountScreen(
+            productName: args['productName'],
+            productPrice: args['productPrice'],
+          );
+        },
+        '/payment': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return PaymentScreen(
+            total: args['total'],
+            igv: args['igv'],
+          );
+        },
+        '/document': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return DocumentScreen(
+            total: args['total'],
+            igv: args['igv'],
+          );
+        },
       },
     );
   }

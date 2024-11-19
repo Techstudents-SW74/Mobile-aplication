@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_application/components/navigator.dart';
+import 'package:mobile_application/views/document.dart';
+import 'package:mobile_application/views/payment.dart';
 
 class AccountScreen extends StatefulWidget {
+  final String productName;
+  final double productPrice;
+  AccountScreen({required this.productName, required this.productPrice});
   @override
   _AccountScreenState createState() => _AccountScreenState();
+
+
 }
 
 class _AccountScreenState extends State<AccountScreen> {
@@ -12,11 +19,28 @@ class _AccountScreenState extends State<AccountScreen> {
   String clientRUC = '';
   String clientName = '';
   int _selectedIndex = 0;
+  double _subtotal = 0.0;
+  double _igv = 0.0;
+  double _total = 0.0;
 
   final TextEditingController rucController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController accountNameController = TextEditingController();
   final TextEditingController tableController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _calculateCosts();
+  }
+
+  void _calculateCosts() {
+    setState(() {
+      _subtotal = widget.productPrice;
+      _igv = _subtotal * 0.18;
+      _total = _subtotal + _igv;
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -249,6 +273,35 @@ class _AccountScreenState extends State<AccountScreen> {
                         ),
                         padding: EdgeInsets.all(16.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Producto Seleccionado:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Nombre: ${widget.productName}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              'Precio: S/${widget.productPrice.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFEDEBF5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.all(16.0),
+                        child: Column(
                           children: [
                             Row(
                               children: [
@@ -279,7 +332,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                                 Text(
-                                  'S/0.00',
+                                  'S/${_subtotal.toStringAsFixed(2)}',
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                               ],
@@ -292,7 +345,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                                 Text(
-                                  'S/0.00',
+                                  'S/${_igv.toStringAsFixed(2)}',
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                               ],
@@ -302,11 +355,18 @@ class _AccountScreenState extends State<AccountScreen> {
                               children: [
                                 Expanded(
                                   child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pushReplacementNamed(context, '/payment');
-                                    },
+                                    onPressed: clientSaved ? () {
+                                      Navigator.pushReplacementNamed(
+                                        context,
+                                        '/payment',
+                                        arguments: {
+                                          'total': _total,
+                                          'igv': _igv,
+                                        },
+                                      );
+                                    }: null,
                                     child: Text(
-                                      'Cobrar S/0.00',
+                                      'Cobrar '+'S/${_total.toStringAsFixed(2)}',
                                       style: TextStyle(color: Colors.white, fontSize: 17),
                                     ),
                                     style: ElevatedButton.styleFrom(

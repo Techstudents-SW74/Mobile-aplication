@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_application/components/navigator.dart';
 
 class DocumentScreen extends StatefulWidget {
+  final double total;
+  final double igv;
+  DocumentScreen({required this.total, required this.igv});
   @override
   _DocumentScreenState createState() => _DocumentScreenState();
 }
@@ -20,6 +23,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Utiliza los valores de widget.total y widget.igv
     return Scaffold(
       backgroundColor: Color(0xFFF0F0F5),
       appBar: AppBar(
@@ -75,7 +79,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                       Text(
-                        'S/122.00',
+                        'S/ ${widget.total.toStringAsFixed(2)}', // Cambiado para mostrar el total
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                     ],
@@ -89,7 +93,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                       Text(
-                        'S/0.00',
+                        'S/ ${widget.igv.toStringAsFixed(2)}', // Cambiado para mostrar el IGV
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                     ],
@@ -106,7 +110,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                 },
                 child: Text(
                   'Nueva Venta',
-                  style: TextStyle(color: Colors.white,fontSize: 18),
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 15),
