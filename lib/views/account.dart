@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_application/components/navigator.dart';
-import 'package:mobile_application/views/document.dart';
-import 'package:mobile_application/views/payment.dart';
+import 'package:mobile_application/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountScreen extends StatefulWidget {
   final String productName;
@@ -9,7 +9,6 @@ class AccountScreen extends StatefulWidget {
   AccountScreen({required this.productName, required this.productPrice});
   @override
   _AccountScreenState createState() => _AccountScreenState();
-
 
 }
 
@@ -27,6 +26,8 @@ class _AccountScreenState extends State<AccountScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController accountNameController = TextEditingController();
   final TextEditingController tableController = TextEditingController();
+
+  final ApiService _apiService = ApiService();
 
   @override
   void initState() {
@@ -51,6 +52,44 @@ class _AccountScreenState extends State<AccountScreen> {
         Navigator.pushReplacementNamed(context, '/sales_summary');
       }
     });
+  }
+
+  Future<void> _addClient() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final restaurantId = prefs.getInt('restaurantId');
+
+      if (restaurantId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Restaurant ID no encontrado.')),
+        );
+        return;
+      }
+
+      final clientData = {
+        "document": rucController.text,
+        "fullName": nameController.text,
+        "documentType": "DNI",
+        "restaurantId": restaurantId,
+      };
+      print(clientData);
+      await _apiService.createClient(clientData);
+
+      setState(() {
+        clientSaved = true;
+        showClientForm = false;
+        clientRUC = rucController.text;
+        clientName = nameController.text;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Cliente agregado correctamente.')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al agregar cliente: $e')),
+      );
+    }
   }
 
   void _showSaveSaleDialog() {
@@ -192,7 +231,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             TextField(
                               controller: rucController,
                               decoration: InputDecoration(
-                                labelText: 'DNI / RUC / CE',
+                                labelText: 'DNI',
                                 filled: true,
                                 fillColor: Color(0xFFEDEBF5),
                                 border: OutlineInputBorder(
@@ -214,13 +253,8 @@ class _AccountScreenState extends State<AccountScreen> {
                             ),
                             SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  clientRUC = rucController.text;
-                                  clientName = nameController.text;
-                                  clientSaved = true;
-                                  showClientForm = false;
-                                });
+                              onPressed: () async {
+                                await _addClient();
                               },
                               child: Text(
                                 'Guardar Cliente',
@@ -362,6 +396,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                         arguments: {
                                           'total': _total,
                                           'igv': _igv,
+                                          'document': clientRUC,
+                                          'name': clientName,
                                         },
                                       );
                                     }: null,

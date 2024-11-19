@@ -85,7 +85,7 @@ class ApiService {
       body: json.encode(clientData),
     );
 
-    if (response.statusCode != 201) {
+    if (response.statusCode != 200) {
       throw Exception('Error al crear cliente: ${response.body}');
     }
   }

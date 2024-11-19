@@ -35,6 +35,8 @@ class MyApp extends StatelessWidget {
           return PaymentScreen(
             total: args['total'],
             igv: args['igv'],
+            document: args['document'],
+            name: args['name'],
           );
         },
         '/document': (context) {
@@ -42,6 +44,8 @@ class MyApp extends StatelessWidget {
           return DocumentScreen(
             total: args['total'],
             igv: args['igv'],
+            document: args['document'],
+            name: args['name'],
           );
         },
       },

@@ -4,8 +4,10 @@ import 'package:mobile_application/components/navigator.dart';
 class PaymentScreen extends StatefulWidget {
   final double total;
   final double igv;
+  final String document;
+  final String name;
 
-  PaymentScreen({required this.total, required this.igv});
+  PaymentScreen({required this.total, required this.igv, required this.document, required this.name});
 
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
@@ -167,6 +169,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     arguments: {
                       'total': widget.total,
                       'igv': widget.igv,
+                      'document': widget.document,
+                      'name': widget.name,
                     },
                   );
                 },

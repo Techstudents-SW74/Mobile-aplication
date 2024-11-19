@@ -4,7 +4,9 @@ import 'package:mobile_application/components/navigator.dart';
 class DocumentScreen extends StatefulWidget {
   final double total;
   final double igv;
-  DocumentScreen({required this.total, required this.igv});
+  final String document;
+  final String name;
+  DocumentScreen({required this.total, required this.igv, required this.document, required this.name});
   @override
   _DocumentScreenState createState() => _DocumentScreenState();
 }
@@ -23,7 +25,6 @@ class _DocumentScreenState extends State<DocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Utiliza los valores de widget.total y widget.igv
     return Scaffold(
       backgroundColor: Color(0xFFF0F0F5),
       appBar: AppBar(
@@ -56,7 +57,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'NOMBRE DEL CLIENTE',
+                    'Cliente: ${widget.name}',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -64,7 +65,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'NUMERO DE DOCUMENTO',
+                    'Documento: ${widget.document}',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -79,7 +80,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                       Text(
-                        'S/ ${widget.total.toStringAsFixed(2)}', // Cambiado para mostrar el total
+                        'S/ ${widget.total.toStringAsFixed(2)}',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                     ],
@@ -93,7 +94,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                       Text(
-                        'S/ ${widget.igv.toStringAsFixed(2)}', // Cambiado para mostrar el IGV
+                        'S/ ${widget.igv.toStringAsFixed(2)}',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                     ],
