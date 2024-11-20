@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/account_screen': (context) {
           final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
           return AccountScreen(
+            productId: args['productId'],
             productName: args['productName'],
             productPrice: args['productPrice'],
           );

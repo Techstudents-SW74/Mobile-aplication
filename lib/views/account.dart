@@ -6,7 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AccountScreen extends StatefulWidget {
   final String productName;
   final double productPrice;
-  AccountScreen({required this.productName, required this.productPrice});
+  final int productId;
+  AccountScreen({required this.productName, required this.productPrice,required this.productId,});
   @override
   _AccountScreenState createState() => _AccountScreenState();
 
@@ -21,6 +22,9 @@ class _AccountScreenState extends State<AccountScreen> {
   double _subtotal = 0.0;
   double _igv = 0.0;
   double _total = 0.0;
+  List<Map<String, dynamic>> _products = [];
+  List<Map<String, dynamic>> _tables = [];
+  int? selectedTableId;
 
   final TextEditingController rucController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
@@ -32,15 +36,58 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     super.initState();
+    _initializeProducts();
+    _calculateCosts();
+    _loadTables();
+  }
+
+  void _initializeProducts() {
+    setState(() {
+      _products.add({
+        'id': widget.productId,
+        'name': widget.productName,
+        'price': widget.productPrice,
+        'quantity': 1,
+      });
+    });
     _calculateCosts();
   }
 
   void _calculateCosts() {
     setState(() {
-      _subtotal = widget.productPrice;
+      _subtotal = _products.fold(
+        0.0, (sum, product) => sum + product['price'] * product['quantity'],
+      );
       _igv = _subtotal * 0.18;
       _total = _subtotal + _igv;
     });
+  }
+
+  Future<void> _loadTables() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final restaurantId = prefs.getInt('restaurantId');
+
+      if (restaurantId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Restaurant ID no encontrado.')),
+        );
+        return;
+      }
+
+      final tables = await _apiService.getTablesByRestaurant(restaurantId);
+      setState(() {
+        _tables = tables.map((table) => {
+          "id": table['id'],
+          "tableNumber": table['tableNumber'],
+          "tableCapacity": table['tableCapacity'],
+        }).toList();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar mesas: $e')),
+      );
+    }
   }
 
   void _onItemTapped(int index) {
@@ -92,6 +139,51 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
+  Future<void> _createAccount() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final restaurantId = prefs.getInt('restaurantId');
+
+      if (restaurantId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Restaurant ID no encontrado.')),
+        );
+        return;
+      }
+
+      final now = DateTime.now().toIso8601String();
+      final accountData = {
+        "accountName": accountNameController.text,
+        "client": {"id": clientRUC},
+        "table": {"id": tableController.text},
+        "restaurantId": restaurantId,
+        "state": "OPEN",
+        "totalAccount": _total,
+        "dateCreated": now,
+        "dateLog": now,
+        "products": _products.map((product) {
+          return {
+            "id": product['id'],
+            "quantity": product['quantity'],
+            "price": product['price'],
+          };
+        }).toList(),
+      };
+
+      await _apiService.createAccount(accountData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Cuenta creada correctamente.')),
+      );
+
+      Navigator.pushReplacementNamed(context, '/chairs');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al crear cuenta: $e')),
+      );
+    }
+  }
+
   void _showSaveSaleDialog() {
     showDialog(
       context: context,
@@ -128,16 +220,27 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 SizedBox(height: 16),
-                TextField(
-                  controller: tableController,
+                DropdownButtonFormField<int>(
+                  value: selectedTableId,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedTableId = value;
+                    });
+                  },
                   decoration: InputDecoration(
-                    labelText: 'Mesa',
+                    labelText: 'Seleccionar Mesa',
                     filled: true,
                     fillColor: Color(0xFFEDEBF5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
+                  items: _tables.map((table) {
+                    return DropdownMenuItem<int>(
+                      value: table['id'],
+                      child: Text('Mesa ${table['tableNumber']} - ${table['tableCapacity']} personas'),
+                    );
+                  }).toList(),
                 ),
               ],
             ),
@@ -310,21 +413,31 @@ class _AccountScreenState extends State<AccountScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Producto Seleccionado:',
+                              'Productos Seleccionados:',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Nombre: ${widget.productName}',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Text(
-                              'Precio: S/${widget.productPrice.toStringAsFixed(2)}',
-                              style: TextStyle(fontSize: 16),
-                            ),
+                            ..._products.map((product) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Nombre: ${product['name']}',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    'Precio: S/${product['price'].toStringAsFixed(2)}',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    'Cantidad: ${product['quantity']}',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
                           ],
                         ),
                       ),

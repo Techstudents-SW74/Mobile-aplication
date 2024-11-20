@@ -113,6 +113,7 @@ class _BoxScreenState extends State<CashierScreen> {
                     context,
                     '/account_screen',
                     arguments: {
+                      'productId': product['id'],
                       'productName': product['productName'],
                       'productPrice': product['productPrice'],
                     },

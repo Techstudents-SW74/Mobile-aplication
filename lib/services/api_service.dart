@@ -38,17 +38,36 @@ class ApiService {
     };
   }
 
+  Future<List<dynamic>> getTablesByRestaurant(int restaurantId) async {
+    final url = Uri.parse('$BASE_URL/table/restaurant/$restaurantId');
+    final headers = await _getHeaders();
 
+    final response = await http.get(url, headers: headers);
 
-  Future<dynamic> getAccountsByRestaurant(String restaurantId) async {
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else if (response.statusCode == 204) {
+      print('No hay mesas disponibles');
+      return [];
+    } else {
+      throw Exception('Error al cargar mesas: ${response.reasonPhrase}');
+    }
+  }
+
+  Future<List<dynamic>> getAccountsByRestaurant(int restaurantId) async {
     final url = Uri.parse('$BASE_URL/account/restaurant/$restaurantId');
     final headers = await _getHeaders();
 
     final response = await http.get(url, headers: headers);
+
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return jsonDecode(response.body) as List<dynamic>;
+    } else if (response.statusCode == 204) {
+      print('No hay cuentas disponibles');
+      return [];
+    } else {
+      throw Exception('Error al cargar cuentas: ${response.reasonPhrase}');
     }
-    throw Exception('Error al obtener cuentas: ${response.body}');
   }
 
   Future<List<dynamic>> getProductsByRestaurant(String restaurantId) async {
@@ -90,18 +109,19 @@ class ApiService {
     }
   }
 
-  Future<void> createSale(String accountId, Map<String, dynamic> saleData) async {
-    final url = Uri.parse('$BASE_URL/account/$accountId/products');
+  Future<void> createAccount(Map<String, dynamic> accountData) async {
+    final url = Uri.parse('$BASE_URL/account');
     final headers = await _getHeaders();
 
     final response = await http.post(
       url,
       headers: headers,
-      body: json.encode(saleData),
+      body: json.encode(accountData),
     );
 
-    if (response.statusCode != 201) {
-      throw Exception('Error al guardar venta: ${response.body}');
+    if (response.statusCode != 200) {
+      throw Exception('Error al crear cuenta: ${response.body}');
     }
   }
+
 }
