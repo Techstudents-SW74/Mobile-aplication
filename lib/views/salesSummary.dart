@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_application/components/navigator.dart';
+import 'package:mobile_application/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SalesSummaryScreen extends StatefulWidget {
   @override
@@ -8,6 +10,49 @@ class SalesSummaryScreen extends StatefulWidget {
 
 class _SalesSummaryScreenState extends State<SalesSummaryScreen> {
   int _selectedIndex = 2;
+  final ApiService _apiService = ApiService();
+  double _totalSalesSoles = 0.0;
+  double _totalSalesDollars = 0.0;
+  int _salesCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSalesSummary();
+  }
+
+  Future<void> _loadSalesSummary() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final restaurantId = prefs.getInt('restaurantId');
+
+      if (restaurantId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Restaurant ID no encontrado.')),
+        );
+        return;
+      }
+
+      final accounts = await _apiService.getAccountsByRestaurant(restaurantId);
+      print("Cuentas obtenidas para el resumen de ventas: $accounts");
+
+      double totalSalesSoles = 0.0;
+      for (var account in accounts) {
+        totalSalesSoles += account['totalAccount'] ?? 0.0;
+      }
+
+      setState(() {
+        _totalSalesSoles = totalSalesSoles;
+        _totalSalesDollars = totalSalesSoles * 0.26;
+        _salesCount = accounts.length;
+      });
+    } catch (e) {
+      print("Error al cargar resumen de ventas: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar resumen de ventas: $e')),
+      );
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -36,20 +81,25 @@ class _SalesSummaryScreenState extends State<SalesSummaryScreen> {
           children: [
               Row(
                 children: [
-                  Expanded(child: _buildSummaryCard('Total de ventas en soles', 'S/ 746.00')),
+                  Expanded(child: _buildSummaryCard('Total de ventas en soles', 'S/ ${_totalSalesSoles.toStringAsFixed(2)}')),
                 ],
               ),
               SizedBox(height: 16),
               Row(
                 children: [
-                  Expanded(child: _buildSummaryCard('Total de ventas en dólares', '\$ 0.00')),
+                  Expanded(child: _buildSummaryCard('Total de ventas en dólares', '\$ ${_totalSalesDollars.toStringAsFixed(2)}')),
                 ],
               ),
               SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(child: _buildSummaryCard('Cantidad de ventas', '43')),
-                ],
+            Row(
+              children: [
+                Expanded(
+                  child: _buildSummaryCard(
+                    'Cantidad de ventas',
+                    '$_salesCount',
+                  ),
+                ),
+              ],
               ),
           ],
         ),

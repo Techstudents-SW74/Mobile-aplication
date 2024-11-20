@@ -20,6 +20,7 @@ class _AccountScreenState extends State<AccountScreen> {
   String clientName = '';
   int _selectedIndex = 0;
   double _subtotal = 0.0;
+  int? clientId;
   double _igv = 0.0;
   double _total = 0.0;
   List<Map<String, dynamic>> _products = [];
@@ -76,8 +77,11 @@ class _AccountScreenState extends State<AccountScreen> {
       }
 
       final tables = await _apiService.getTablesByRestaurant(restaurantId);
+
       setState(() {
-        _tables = tables.map((table) => {
+        _tables = tables
+            .where((table) => table['tableStatus'] != 'Occupied')
+            .map((table) => {
           "id": table['id'],
           "tableNumber": table['tableNumber'],
           "tableCapacity": table['tableCapacity'],
@@ -119,14 +123,16 @@ class _AccountScreenState extends State<AccountScreen> {
         "documentType": "DNI",
         "restaurantId": restaurantId,
       };
+
       print(clientData);
-      await _apiService.createClient(clientData);
+      final createdClient = await _apiService.createClient(clientData);
 
       setState(() {
         clientSaved = true;
         showClientForm = false;
         clientRUC = rucController.text;
         clientName = nameController.text;
+        clientId = createdClient['id'];
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -152,37 +158,73 @@ class _AccountScreenState extends State<AccountScreen> {
       }
 
       final now = DateTime.now().toIso8601String();
+      final tableDetails = await _apiService.getTableById(selectedTableId!);
+
+      final updatedTable = {
+        ...tableDetails,
+        "tableStatus": "Occupied",
+        "tableGuests": tableDetails["tableCapacity"],
+      };
+      await _apiService.updateTable(updatedTable);
+
       final accountData = {
         "accountName": accountNameController.text,
-        "client": {"id": clientRUC},
-        "table": {"id": tableController.text},
+        "client": {
+          "id": clientId,
+          "fullName": clientName,
+          "documentType": "DNI",
+          "document": clientRUC,
+          "restaurantId": restaurantId,
+        },
+        "table": updatedTable,
         "restaurantId": restaurantId,
-        "state": "OPEN",
+        "state": "InProgress",
         "totalAccount": _total,
         "dateCreated": now,
         "dateLog": now,
-        "products": _products.map((product) {
-          return {
-            "id": product['id'],
-            "quantity": product['quantity'],
-            "price": product['price'],
-          };
-        }).toList(),
+        "products": [],
       };
 
-      await _apiService.createAccount(accountData);
+      final response = await _apiService.createAccount(accountData);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Cuenta creada correctamente.')),
-      );
+      if (response != null && response['id'] != null) {
+        final accountId = response['id'];
 
-      Navigator.pushReplacementNamed(context, '/chairs');
+        final updatedProducts = _products.map((product) {
+          return {
+            "id": product['id'],
+            "productName": product['name'],
+            "price": product['price'],
+            "quantity": product['quantity'],
+          };
+        }).toList();
+
+        final updatedAccountData = {
+          ...accountData,
+          "products": updatedProducts,
+        };
+
+        final updateResponse = await _apiService.updateAccount(accountId, updatedAccountData);
+
+        if (updateResponse != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Cuenta creada y productos asociados correctamente.')),
+          );
+
+          Navigator.pushReplacementNamed(context, '/chairs');
+        } else {
+          throw Exception('Error: No se pudo actualizar la cuenta con productos.');
+        }
+      } else {
+        throw Exception('Error: No se pudo obtener el ID de la cuenta creada.');
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al crear cuenta: $e')),
       );
     }
   }
+
 
   void _showSaveSaleDialog() {
     showDialog(
@@ -248,9 +290,15 @@ class _AccountScreenState extends State<AccountScreen> {
           actions: [
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushReplacementNamed(context, '/chairs');
+                onPressed: () async {
+                  if (selectedTableId != null && accountNameController.text.isNotEmpty) {
+                    await _createAccount();
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Por favor completa todos los campos.')),
+                    );
+                  }
                 },
                 child: Text(
                   'Guardar Cuenta',
