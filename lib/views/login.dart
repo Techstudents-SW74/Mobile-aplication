@@ -25,8 +25,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (user != null) {
         final token = user['token'];
+        final restaurantId = user['restaurantId'];
+
+        if (restaurantId == null) {
+          setState(() {
+            _responseMessage = 'Error: No se encontró el restaurantId.';
+          });
+          return;
+        }
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('authToken', token);
+        await prefs.setInt('restaurantId', restaurantId);
 
         setState(() {
           _responseMessage = 'Inicio de sesión exitoso. Bienvenido!';
@@ -47,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
   }
+
 
   Widget _buildTextField({
     required TextEditingController controller,
@@ -122,12 +133,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () => _login(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7C73CC),
-                  padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
-                child: const Text('Iniciar Sesión', style: TextStyle(fontSize: 18)),
+                child: const Text('Iniciar Sesión', style: TextStyle(fontSize: 16)),
               ),
               const SizedBox(height: 20),
               Text(

@@ -219,9 +219,9 @@ class _AccountScreenState extends State<AccountScreen> {
         throw Exception('Error: No se pudo obtener el ID de la cuenta creada.');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al crear cuenta: $e')),
-      );
+      //ScaffoldMessenger.of(context).showSnackBar(
+      //  SnackBar(content: Text('Error al crear cuenta: $e')),
+      //);
     }
   }
 
