@@ -105,7 +105,7 @@ class ApiService {
     );
 
     if (response.statusCode == 201 || response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return json.decode(response.body);
     } else {
       throw Exception('Error al crear cliente: ${response.body}');
     }
